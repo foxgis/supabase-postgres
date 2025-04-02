@@ -110,7 +110,7 @@ GRANT ALL PRIVILEGES ON SCHEMA storage TO supabase_storage_admin;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA storage TO supabase_storage_admin;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA storage TO supabase_storage_admin;
 GRANT USAGE ON SCHEMA extensions TO supabase_storage_admin;
-ALTER USER supabase_storage_admin SET search_path = "storage, extensions";
+ALTER USER supabase_storage_admin SET search_path = storage, extensions;
 ALTER table "storage".objects owner to supabase_storage_admin;
 ALTER table "storage".buckets owner to supabase_storage_admin;
 ALTER table "storage".migrations OWNER TO supabase_storage_admin;
