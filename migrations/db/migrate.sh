@@ -15,7 +15,7 @@ set -eu
 
 export PGDATABASE="${POSTGRES_DB:-postgres}"
 export PGHOST="${POSTGRES_HOST:-localhost}"
-export PGPORT="${POSTGRES_PORT:-5432}"
+export PGPORT="${POSTGRES_PORT:-5866}"
 export PGPASSWORD="${POSTGRES_PASSWORD:-}"
 
 # if args are supplied, simply forward to dbmate
@@ -69,4 +69,4 @@ if [ -e "$postinit" ]; then
 fi
 
 # once done with everything, reset stats from init
-psql -v ON_ERROR_STOP=1 --no-password --no-psqlrc -U supabase_admin -c 'SELECT extensions.pg_stat_statements_reset(); SELECT pg_stat_reset();' || true
+psql -v ON_ERROR_STOP=1 --no-password --no-psqlrc -U supabase_admin -c 'SELECT public.pg_stat_statements_reset(); SELECT pg_stat_reset();' || true

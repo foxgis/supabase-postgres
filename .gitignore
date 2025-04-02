@@ -24,3 +24,5 @@ result*
 .vscode/
 
 db
+migrations/data/
+migrations/hgdb.lic
