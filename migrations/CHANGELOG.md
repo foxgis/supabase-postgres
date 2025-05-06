@@ -7,6 +7,7 @@
     - 注释掉`grant pg_read_all_data to supabase_read_only_user;`。（PG12无pg_read_all_data角色）
     - 增加`create extension postgis`。（pg_tileserv\pg_featureserv要求）
     - `anon`、`authenticated`、`service_role`增加`inherit`属性。（瀚高数据库限制）
+    - `anon`和`authenticated`角色的`statement_timeout`设置为60s。
 3. 修改`00000000000001-auth-schema.sql`
     - `supabase_auth_admin`增加密码。（瀚高数据库限制）
     - 增加`GRANT USAGE ON SCHEMA extensions TO supabase_auth_admin;`。（为了调用gen_rand_uuid函数）
@@ -29,5 +30,7 @@
 4. 修改`10000000000000_demote-postgres.sql`。
     - 注释`GRANT ALL ON DATABASE postgres TO postgres;`。（瀚高数据库限制）
     - 注释`ALTER ROLE postgres NOSUPERUSER CREATEDB CREATEROLE LOGIN REPLICATION BYPASSRLS;`（非必要）
-5. 修改`20240606060239_grant_predefined_roles_to_postgres.sql`
+5. 修改`20221028101028_set_authenticator_timeout.sql`
+    - 将`authenticator`角色的`statement_timeout`设置为60s。
+6. 修改`20240606060239_grant_predefined_roles_to_postgres.sql`
     - 去除`pg_read_all_data`角色。（PG12无此角色）

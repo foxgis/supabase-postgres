@@ -53,7 +53,7 @@ alter default privileges for user supabase_admin in schema public grant all
     on functions to postgres, anon, authenticated, service_role;
 
 -- Set short statement/query timeouts for API roles
-alter role anon set statement_timeout = '3s';
-alter role authenticated set statement_timeout = '8s';
+alter role anon set statement_timeout = '60s';
+alter role authenticated set statement_timeout = '60s';
 
 -- migrate:down
