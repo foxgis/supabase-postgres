@@ -22,6 +22,7 @@ create extension if not exists pgcrypto         with schema extensions;
 create extension if not exists pgjwt            with schema extensions;
 create extension if not exists postgis          with schema extensions;
 
+
 -- Set up auth roles for the developer
 create role anon                nologin inherit;
 create role authenticated       nologin inherit; -- "logged in" user: web_user, app_user, etc

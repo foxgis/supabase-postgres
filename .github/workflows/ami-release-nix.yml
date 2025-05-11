@@ -11,6 +11,10 @@ on:
       - 'ansible/vars.yml'
   workflow_dispatch:
 
+permissions:
+  contents: write
+  id-token: write
+
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -41,10 +45,6 @@ jobs:
             mcpu: neoverse-n1
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 150
-    permissions:
-      contents: write
-      packages: write
-      id-token: write
 
     steps:
       - name: Checkout Repo
@@ -56,7 +56,7 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           SUFFIX=$(sudo nix run nixpkgs#yq -- ".postgres_release[\"postgres${{ matrix.postgres_version }}\"]" ansible/vars.yml | sed -E 's/[0-9\.]+(.*)$/\1/')
-          if [[ -z $SUFFIX ]] ; then
+          if [[ -z "$SUFFIX" ]] ; then
             echo "Version must include non-numeric characters if built manually."
             exit 1
           fi
@@ -67,7 +67,7 @@ jobs:
       - name: Generate common-nix.vars.pkr.hcl
         run: |
           PG_VERSION=$(sudo nix run nixpkgs#yq -- '.postgres_release["postgres'${{ matrix.postgres_version }}'"]' ansible/vars.yml)
-          PG_VERSION=$(echo $PG_VERSION | tr -d '"')  # Remove any surrounding quotes
+          PG_VERSION=$(echo "$PG_VERSION" | tr -d '"')  # Remove any surrounding quotes
           echo 'postgres-version = "'$PG_VERSION'"' > common-nix.vars.pkr.hcl
           # Ensure there's a newline at the end of the file
           echo "" >> common-nix.vars.pkr.hcl
@@ -78,6 +78,7 @@ jobs:
         run: |
           packer init amazon-arm64-nix.pkr.hcl
           GIT_SHA=${{github.sha}}
+          # why is postgresql_major defined here instead of where the _three_ other postgresql_* variables are defined?
           packer build -var "git-head-version=${GIT_SHA}" -var "packer-execution-id=${GITHUB_RUN_ID}"  -var-file="development-arm.vars.pkr.hcl" -var-file="common-nix.vars.pkr.hcl" -var "ansible_arguments=-e postgresql_major=${POSTGRES_MAJOR_VERSION}"  amazon-arm64-nix.pkr.hcl
 
       - name: Build AMI stage 2
@@ -143,7 +144,7 @@ jobs:
           aws s3 cp /tmp/pg_binaries.tar.gz s3://${{ secrets.PROD_ARTIFACTS_BUCKET }}/upgrades/postgres/supabase-postgres-${{ steps.process_release_version.outputs.version }}/20.04.tar.gz
 
       - name: Create release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           name: ${{ steps.process_release_version.outputs.version }}
           tag_name: ${{ steps.process_release_version.outputs.version }}

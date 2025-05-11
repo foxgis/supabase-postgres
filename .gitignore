@@ -26,3 +26,5 @@ result*
 db
 migrations/data/
 migrations/hgdb.lic
+db/schema.sql
+common-nix.vars.pkr.hcl

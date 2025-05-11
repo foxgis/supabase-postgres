@@ -9,7 +9,11 @@ on:
       - ".github/workflows/dockerhub-release-matrix.yml"
       - "ansible/vars.yml"
   workflow_dispatch:
- 
+
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   prepare:
     runs-on: ubuntu-latest
@@ -157,7 +161,7 @@ jobs:
         run: |
           echo "${{ steps.output_version.outputs.result }}" >> results.txt  # Append results
       - name: Upload Results Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: merge_results-${{ matrix.version }}
           path: results.txt
@@ -195,7 +199,7 @@ jobs:
             $"versions=$versions_str" | save --append $env.GITHUB_ENV
           '
       - name: Download Results Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           pattern: merge_results-*
       - name: Combine Results
@@ -233,6 +237,10 @@ jobs:
       matrix: ${{ steps.combine.outputs.matrix }}
   publish:
       needs: combine_results
+      permissions:
+        contents: read
+        packages: write
+        id-token: write
       strategy:
         matrix: ${{ fromJson(needs.combine_results.outputs.matrix) }}
       uses: ./.github/workflows/mirror.yml
