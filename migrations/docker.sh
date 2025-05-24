@@ -21,6 +21,7 @@ docker run -d --name=hgdb \
   -e POSTGRES_HOST_AUTH_METHOD="md5" \
   -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
   -e POSTGRES_INITDB_ARGS="-A md5 -e sm4 -c 'echo 12345678' -E 'UTF8'" \
+  --restart always \
   jingsam/supabase-highgo:latest
 
 # 等待数据库启动
