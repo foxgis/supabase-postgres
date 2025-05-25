@@ -10,7 +10,7 @@ ARG pg_net_release=0.9.2
 ARG hypopg_release=1.4.1
 ARG index_advisor_release=0.2.0
 
-FROM qiuchenjun/hgdb-see-postgis:4.5.10.3-3.4 as builder
+FROM qiuchenjun/hgdb-see-postgis:4.5.10.3-3.4.0 as builder
 # Install build dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -113,7 +113,7 @@ COPY --from=index_advisor /tmp/*.deb /tmp/
 ####################
 # Build final image
 ####################
-FROM qiuchenjun/hgdb-see-postgis:4.5.10.3-3.4 as production
+FROM qiuchenjun/hgdb-see-postgis:4.5.10.3-3.4.0 as production
 
 # Setup extensions
 COPY --from=extensions /tmp /tmp
