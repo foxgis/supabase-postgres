@@ -35,9 +35,9 @@ docker exec -i hgdb gosu highgo bash <<- "EOF"
   hg_version_gen "PostgreSQL 12.7" "PostgreSQL 12.7" "12.7"
 EOF
 
-# 关闭三权分立
+# 临时关闭三权分立
 docker exec -i -e PGPASSWORD=$POSTGRES_PASSWORD hgdb psql -U syssso -d highgo <<- "EOF"
-  select set_secure_param('hg_sepofpowers', 'off');
+  select set_secure_param('hg_sepv4','dyn_off');
 EOF
 
 # 更改数据库配置
@@ -70,3 +70,8 @@ EOF
 
 # 初始化数据库
 ./db/migrate.sh
+
+# 恢复三权分立
+docker exec -i -e PGPASSWORD=$POSTGRES_PASSWORD hgdb psql -U syssso -d highgo <<- "EOF"
+  select set_secure_param('hg_sepv4','on');
+EOF
