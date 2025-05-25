@@ -1,4 +1,5 @@
 -- migrate:up
+\set pgpass `echo "$POSTGRES_PASSWORD"`
 
 -- Set up realtime
 -- defaults to empty publication
@@ -8,24 +9,26 @@ create publication supabase_realtime;
 alter user  supabase_admin with superuser createdb createrole replication bypassrls;
 
 -- Supabase replication user
-create user supabase_replication_admin with login replication;
+create user supabase_replication_admin with login replication password :'pgpass';
 
 -- Supabase read-only user
-create role supabase_read_only_user with login bypassrls;
-grant pg_read_all_data to supabase_read_only_user;
+create role supabase_read_only_user with login bypassrls password :'pgpass';
+-- grant pg_read_all_data to supabase_read_only_user;
 
 -- Extension namespacing
 create schema if not exists extensions;
 create extension if not exists "uuid-ossp"      with schema extensions;
 create extension if not exists pgcrypto         with schema extensions;
+create extension if not exists pgjwt            with schema extensions;
+create extension if not exists postgis          with schema extensions;
 
 
 -- Set up auth roles for the developer
-create role anon                nologin noinherit;
-create role authenticated       nologin noinherit; -- "logged in" user: web_user, app_user, etc
-create role service_role        nologin noinherit bypassrls; -- allow developers to create JWT's that bypass their policies
+create role anon                nologin inherit;
+create role authenticated       nologin inherit; -- "logged in" user: web_user, app_user, etc
+create role service_role        nologin inherit bypassrls; -- allow developers to create JWT's that bypass their policies
 
-create user authenticator noinherit;
+create user authenticator noinherit password :'pgpass';
 grant anon              to authenticator;
 grant authenticated     to authenticator;
 grant service_role      to authenticator;
@@ -51,7 +54,7 @@ alter default privileges for user supabase_admin in schema public grant all
     on functions to postgres, anon, authenticated, service_role;
 
 -- Set short statement/query timeouts for API roles
-alter role anon set statement_timeout = '3s';
-alter role authenticated set statement_timeout = '8s';
+alter role anon set statement_timeout = '60s';
+alter role authenticated set statement_timeout = '60s';
 
 -- migrate:down
