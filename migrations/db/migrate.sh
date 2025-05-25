@@ -43,7 +43,7 @@ EOSQL
         echo "$0: running $sql"
         psql -v ON_ERROR_STOP=1 --no-password --no-psqlrc -U postgres -f "$sql"
     done
-    psql -v ON_ERROR_STOP=1 --no-password --no-psqlrc -U postgres -c "ALTER USER supabase_admin WITH PASSWORD '$PGPASSWORD'"
+    # psql -v ON_ERROR_STOP=1 --no-password --no-psqlrc -U postgres -c "ALTER USER supabase_admin WITH PASSWORD '$PGPASSWORD'"
     # run migrations as super user - postgres user demoted in post-setup
     for sql in "$db"/migrations/*.sql; do
         echo "$0: running $sql"
