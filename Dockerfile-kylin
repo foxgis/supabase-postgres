@@ -28,7 +28,10 @@ RUN rpmdev-setuptree
 RUN git clone http://checkinstall.izto.org/checkinstall.git && \
     cd checkinstall && \
     make -j$(nproc) && \
-    make install
+    make install && \
+    echo "/usr/local/lib64" >/etc/ld.so.conf.d/installwatch.conf && \
+    ln -s /usr/local/lib/installwatch.so /usr/local/lib64/installwatch.so && \
+    ldconfig
 
 ####################
 # 06-pgjwt.yml
