@@ -30,9 +30,12 @@ until docker exec hgdb pg_isready -U sysdba -d highgo -q; do
   sleep 1
 done
 
+# 复制许可文件
+cp hgdb.lic data/
+
 # 更改select version()返回值，以兼容GDAL
 docker exec -i hgdb gosu highgo bash <<- "EOF"
-  hg_version_gen "PostgreSQL 12.7 (HGDB-SEE V4.5)" "瀚高安全版 V4.5" "12.7"
+  hg_version_gen "PostgreSQL 12.7 (HGDB-SEE V4.5)" "PostgreSQL 12.7 (HGDB-SEE V4.5)" "12.7"
 EOF
 
 # 更改数据库配置
@@ -40,9 +43,6 @@ docker exec -i -e PGPASSWORD=$POSTGRES_PASSWORD hgdb gosu highgo psql -U sysdba 
   alter system set shared_preload_libraries = pg_stat_statements, pg_cron, pg_net;
   alter system set wal_level = 'logical';
 EOF
-
-# 复制许可文件
-cp hgdb.lic data/
 
 # 重启数据库使配置生效
 docker restart hgdb
@@ -58,18 +58,14 @@ docker exec -i -e PGPASSWORD=$POSTGRES_PASSWORD hgdb gosu highgo psql -U syssso 
   select set_secure_param('hg_sepv4','dyn_off');
 EOF
 
-# 创建supabase所需的数据库和用户
+# 创建数据库和用户
 docker exec -i -e PGPASSWORD=$POSTGRES_PASSWORD hgdb gosu highgo psql -U sysdba -d highgo <<- EOF
   create role postgres superuser login password '$POSTGRES_PASSWORD';
-  create role supabase_admin superuser login password '$POSTGRES_PASSWORD';
-  create role dashboard_user NOSUPERUSER CREATEDB CREATEROLE REPLICATION;
-  create user supabase_functions_admin NOINHERIT CREATEROLE LOGIN NOREPLICATION PASSWORD '$POSTGRES_PASSWORD';
   create database $POSTGRES_DB with owner postgres;
-  grant all on database $POSTGRES_DB to dashboard_user;
 EOF
 
 # 初始化数据库
-./db/migrate.sh
+./initdb.sh
 
 # 恢复三权分立
 docker exec -i -e PGPASSWORD=$POSTGRES_PASSWORD hgdb gosu highgo psql -U syssso -d highgo <<- "EOF"

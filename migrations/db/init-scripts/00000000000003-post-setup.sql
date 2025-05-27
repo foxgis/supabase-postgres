@@ -1,4 +1,5 @@
 -- migrate:up
+\set db `echo "$POSTGRES_DB"`
 
 ALTER ROLE supabase_admin SET search_path TO "\$user",public,auth,extensions;
 ALTER ROLE postgres SET search_path TO "\$user",public,extensions;
@@ -101,8 +102,8 @@ END
 $$;
 
 -- Supabase dashboard user
--- CREATE ROLE dashboard_user NOSUPERUSER CREATEDB CREATEROLE REPLICATION;
--- GRANT ALL ON DATABASE postgres TO dashboard_user;
+CREATE ROLE dashboard_user NOSUPERUSER CREATEDB CREATEROLE REPLICATION;
+GRANT ALL ON DATABASE :db TO dashboard_user;
 GRANT ALL ON SCHEMA auth TO dashboard_user;
 GRANT ALL ON SCHEMA extensions TO dashboard_user;
 GRANT ALL ON SCHEMA storage TO dashboard_user;
