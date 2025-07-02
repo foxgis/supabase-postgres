@@ -39,9 +39,12 @@ docker exec -i hgdb gosu highgo bash <<- "EOF"
 EOF
 
 # 更改数据库配置
-docker exec -i -e PGPASSWORD=$POSTGRES_PASSWORD hgdb gosu highgo psql -U sysdba -d highgo <<- "EOF"
+docker exec -i -e PGPASSWORD=$POSTGRES_PASSWORD hgdb gosu highgo psql -U sysdba -d highgo <<- EOF
   alter system set shared_preload_libraries = pg_stat_statements, pg_cron, pg_net;
   alter system set wal_level = 'logical';
+  alter system set pg_net.database_name = '$POSTGRES_DB';
+  alter system set cron.database_name = '$POSTGRES_DB';
+  alter system set cron.timezone = 'Asia/Shanghai';
 EOF
 
 # 重启数据库使配置生效
