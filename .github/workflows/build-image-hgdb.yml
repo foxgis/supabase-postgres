@@ -1,4 +1,4 @@
-name: Build multiarch docker images
+name: Build multiarch docker images (hgdb)
 
 on:
   workflow_dispatch:
