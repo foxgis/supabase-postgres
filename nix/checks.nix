@@ -22,6 +22,7 @@
         let
           # Create a testing harness for a PostgreSQL package. This is used for
           # 'nix flake check', and works with any PostgreSQL package you hand it.
+          # deadnix: skip
           makeCheckHarness =
             pgpkg:
             let
@@ -295,7 +296,6 @@
             dbmate-tool
             pg_regress
             ;
-          devShell = self'.devShells.default;
         }
         // pkgs.lib.optionalAttrs (system == "aarch64-linux") {
           inherit (self'.packages)
@@ -306,6 +306,13 @@
             postgresql_17_debug
             postgresql_17_src
             ;
+        }
+        // pkgs.lib.optionalAttrs (system == "x86_64-linux") {
+          wrappers = import ./ext/tests/wrappers.nix {
+            inherit self;
+            inherit pkgs;
+          };
+          devShell = self'.devShells.default;
         };
     };
 }
