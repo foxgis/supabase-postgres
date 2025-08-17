@@ -350,7 +350,14 @@ function initiate_upgrade {
     if [ -z "$IS_CI" ] && [ -z "$IS_LOCAL_UPGRADE" ]; then
         # DATABASE_UPGRADE_DATA_MIGRATION_DEVICE_NAME = '/dev/xvdp' can be derived from the worker mount
         echo "5. Determining block device to mount"
-        if command -v ebsnvme-id >/dev/null 2>&1 && dpkg -l | grep -q amazon-ec2-utils; then
+        # lsb release
+        UBUNTU_VERSION=$(lsb_release -rs)
+        # install amazon disk utilities if not present on 24.04
+        if [ "${UBUNTU_VERSION}" = "24.04" ] && ! /usr/bin/dpkg-query -W amazon-ec2-utils >/dev/null 2>&1; then
+            apt-get update
+            apt-get install -y amazon-ec2-utils || true
+        fi
+        if command -v ebsnvme-id >/dev/null 2>&1 && /usr/bin/dpkg-query -W amazon-ec2-utils >/dev/null 2>&1; then
             for nvme_dev in $(lsblk -dprno name,size,mountpoint,type | grep disk | awk '{print $1}'); do
                 if [ -b "$nvme_dev" ]; then
                     mapping=$(ebsnvme-id -b "$nvme_dev" 2>/dev/null)
@@ -363,7 +370,7 @@ function initiate_upgrade {
         fi
 
         # Fallback to lsblk if ebsnvme-id is not available or no mapping found, pre ubuntu 20.04
-        if [ -z "$BLOCK_DEVICE" ]; then
+        if [ -z "${BLOCK_DEVICE:-}" ]; then
             echo "No block device found using ebsnvme-id, falling back to lsblk"
             # awk NF==3 prints lines with exactly 3 fields, which are the block devices currently not mounted anywhere
             # excluding nvme0 since it is the root disk
