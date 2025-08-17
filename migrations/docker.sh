@@ -70,7 +70,7 @@ docker exec -i -e PGPASSWORD=$POSTGRES_PASSWORD hgdb gosu highgo psql -U sysdba 
 EOF
 
 # 初始化数据库
-./db/initdb.sh
+./db/migrate.sh
 
 # 恢复三权分立
 docker exec -i -e PGPASSWORD=$POSTGRES_PASSWORD hgdb gosu highgo psql -U syssso -d highgo <<- "EOF"
