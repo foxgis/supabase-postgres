@@ -23,9 +23,7 @@
 ## migrations
 
 1. 排除`00-extensions.sql`。（pg_stat_statements默认已安装）
-2. 修改`10000000000000_demote-postgres.sql`。
-    - 注释`GRANT ALL ON DATABASE postgres TO postgres;`。（非必须）
-    - 注释`ALTER ROLE postgres NOSUPERUSER CREATEDB CREATEROLE LOGIN REPLICATION BYPASSRLS;`（非必要）
+2. 注释`10000000000000_demote-postgres.sql`。（非必要）
 3. 修改`20221028101028_set_authenticator_timeout.sql`
     - 将`authenticator`角色的`statement_timeout`设置为60s。
 4. 注释`20230529180330_alter_api_roles_for_inherit.sql`。（内容已经在00000000000000-initial-schema.sql实现）

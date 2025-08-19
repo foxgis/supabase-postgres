@@ -1,5 +1,4 @@
 -- migrate:up
-\set pgpass `echo "$POSTGRES_PASSWORD"`
 
 CREATE SCHEMA IF NOT EXISTS storage AUTHORIZATION supabase_admin;
 
@@ -105,7 +104,7 @@ CREATE TABLE IF NOT EXISTS storage.migrations (
   executed_at timestamp DEFAULT current_timestamp
 );
 
-CREATE USER supabase_storage_admin NOINHERIT CREATEROLE LOGIN NOREPLICATION PASSWORD :'pgpass';
+-- CREATE USER supabase_storage_admin NOINHERIT CREATEROLE LOGIN NOREPLICATION;
 GRANT ALL PRIVILEGES ON SCHEMA storage TO supabase_storage_admin;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA storage TO supabase_storage_admin;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA storage TO supabase_storage_admin;

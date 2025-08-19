@@ -65,12 +65,10 @@ EOF
 docker exec -i -e PGPASSWORD=$POSTGRES_PASSWORD hgdb gosu highgo psql -U sysdba -d highgo <<- EOF
   create role postgres superuser login password '$POSTGRES_PASSWORD';
   create database $POSTGRES_DB with owner postgres;
-  create role supabase_admin superuser login password '$POSTGRES_PASSWORD';
-  create user supabase_functions_admin noinherit createrole login noreplication password '$POSTGRES_PASSWORD';
 EOF
 
 # 初始化数据库
-./db/migrate.sh
+./initdb.sh
 
 # 恢复三权分立
 docker exec -i -e PGPASSWORD=$POSTGRES_PASSWORD hgdb gosu highgo psql -U syssso -d highgo <<- "EOF"

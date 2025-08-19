@@ -1,5 +1,4 @@
 -- migrate:up
-\set pgpass `echo "$POSTGRES_PASSWORD"`
 
 CREATE SCHEMA IF NOT EXISTS auth AUTHORIZATION supabase_admin;
 
@@ -110,7 +109,7 @@ $$ language sql stable;
 GRANT USAGE ON SCHEMA auth TO anon, authenticated, service_role;
 
 -- Supabase super admin
-CREATE USER supabase_auth_admin NOINHERIT CREATEROLE LOGIN NOREPLICATION PASSWORD :'pgpass';
+-- CREATE USER supabase_auth_admin NOINHERIT CREATEROLE LOGIN NOREPLICATION;
 GRANT ALL PRIVILEGES ON SCHEMA auth TO supabase_auth_admin;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA auth TO supabase_auth_admin;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA auth TO supabase_auth_admin;
