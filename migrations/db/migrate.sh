@@ -69,4 +69,4 @@ if [ -e "$postinit" ]; then
 fi
 
 # once done with everything, reset stats from init
-psql -v ON_ERROR_STOP=1 --no-password --no-psqlrc -U supabase_admin -c 'SELECT public.pg_stat_statements_reset(); SELECT pg_stat_reset();' || true
+# psql -v ON_ERROR_STOP=1 --no-password --no-psqlrc -U supabase_admin -c 'SELECT public.pg_stat_statements_reset(); SELECT pg_stat_reset();' || true
