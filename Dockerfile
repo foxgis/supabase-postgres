@@ -10,7 +10,7 @@ ARG pgjwt_release=9742dab1b2f297ad3811120db7b21451bca2d3c9
 ARG pg_safeupdate_release=1.4
 ARG pg_net_release=0.9.2
 ARG hypopg_release=1.3.1
-ARG pgvector_release=0.4.0
+ARG pgvector_release=0.8.0
 ARG index_advisor_release=0.2.0
 
 FROM postgres:12.22-bookworm as builder
@@ -30,7 +30,7 @@ RUN apt-get update && \
 FROM builder as postgis-source
 # Download and extract
 ARG postgis_release
-ADD "https://supabase-public-artifacts-bucket.s3.amazonaws.com/postgis-${postgis_release}.tar.gz" \
+ADD "https://github.com/postgis/postgis/archive/refs/tags/${postgis_release}.tar.gz" \
     /tmp/postgis.tar.gz
 RUN tar -xvf /tmp/postgis.tar.gz -C /tmp && \
     rm -rf /tmp/postgis.tar.gz
@@ -73,8 +73,10 @@ RUN checkinstall -D --install=no --fstrans=no --backup=no --pakdir=/tmp --nodoc
 FROM builder as pgjwt-source
 # Download and extract
 ARG pgjwt_release
-ADD "https://github.com/michelp/pgjwt.git#${pgjwt_release}" \
-    /tmp/pgjwt-${pgjwt_release}
+ADD "https://github.com/michelp/pgjwt/archive/${pgjwt_release}.tar.gz" \
+    /tmp/pgjwt.tar.gz
+RUN tar -xvf /tmp/pgjwt.tar.gz -C /tmp && \
+    rm -rf /tmp/pgjwt.tar.gz
 # Build from source
 WORKDIR /tmp/pgjwt-${pgjwt_release}
 RUN make -j$(nproc)
