@@ -10,7 +10,7 @@ ARG pgjwt_release=9742dab1b2f297ad3811120db7b21451bca2d3c9
 ARG pg_safeupdate_release=1.4
 ARG pg_net_release=0.9.2
 ARG hypopg_release=1.3.1
-ARG pgvector_release=0.8.0
+ARG pgvector_release=0.7.4
 ARG index_advisor_release=0.2.0
 
 FROM postgres:12.22-bookworm as builder
