@@ -30,7 +30,7 @@ RUN apt-get update && \
 FROM builder as postgis-source
 # Download and extract
 ARG postgis_release
-ADD "https://download.osgeo.org/postgis/source/postgis-${postgis_release}.tar.gz$" \
+ADD "https://download.osgeo.org/postgis/source/postgis-${postgis_release}.tar.gz" \
     /tmp/postgis.tar.gz
 RUN tar -xvf /tmp/postgis.tar.gz -C /tmp && \
     rm -rf /tmp/postgis.tar.gz
