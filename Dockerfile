@@ -117,7 +117,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /tmp/pg_net-${pg_net_release}
 RUN make -j$(nproc)
 # Create debian package
-RUN checkinstall -D --install=no --fstrans=no --backup=no --pakdir=/tmp --requires=libcurl3-gnutls --nodoc
+RUN checkinstall -D --install=no --fstrans=no --backup=no --pakdir=/tmp --requires=libcurl4-gnutls --nodoc
 
 ####################
 # 26-hypopg.yml

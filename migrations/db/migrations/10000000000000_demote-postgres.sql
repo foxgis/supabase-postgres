@@ -1,5 +1,8 @@
 -- migrate:up
 
+create schema if not exists _realtime;
+create schema if not exists _analytics;
+
 -- demote postgres user
 -- GRANT ALL ON DATABASE postgres TO postgres;
 -- GRANT ALL ON SCHEMA auth TO postgres;
